@@ -1,0 +1,3 @@
+This app is a CircuitPython program that runs on adafruit PyBadge.
+It displays recieved MIDI clock messages and displays the tempo in BPM.
+A Word doc file provided installation and testing instructions.
