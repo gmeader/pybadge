@@ -1,3 +1,7 @@
 This app is a CircuitPython program that runs on adafruit PyBadge.
 It displays recieved MIDI clock messages and displays the tempo in BPM.
+
 A Word doc file provided installation and testing instructions.
+
+midiclock-test.py is a Python3 script intended to run on a host computer to send
+test MIDI messages to a connected PyBadge.
