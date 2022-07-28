@@ -1,10 +1,12 @@
-MidiCommander
-A CircuitPython app for the Adafruit PyGamer
+# MidiCommander
+## A CircuitPython app for the Adafruit PyGamer wuth NIDI Featherwing
 
 ![Midicommander on PyGamer](MidiCommander3.jpg)
 
-MidiCommander enables a user to "play" syx and .mic files stored in "playlists" on an SDcard, out to connected MIDI devices.
+MidiCommander enables a user to "play" syx and .mic files stored in "playlists" on an SDcard, out to MIDI devices connected by MIDI cable to the MIDI Featherwing MIDI Out DIN connector..
 It may be used to send MIDI data to several devices to configure a MIDI setup for each song during a gig.
+
+Press the B button for Help
 
 editmic is a Python program that is an editing utility for use with MidiCommander.
 editmic manages the files and playlist structure on the SDcard, and edits the contents of .mic files
