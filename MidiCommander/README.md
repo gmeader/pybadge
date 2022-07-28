@@ -1,6 +1,8 @@
 MidiCommander
 A CircuitPython app for the Adafruit PyGamer
 
+![Midicommander on PyGamer](MidiCommander3.jpg)
+
 MidiCommander enables a user to "play" syx and .mic files stored in "playlists" on an SDcard, out to connected MIDI devices.
 It may be used to send MIDI data to several devices to configure a MIDI setup for each song during a gig.
 
