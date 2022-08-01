@@ -1,6 +1,6 @@
 # File manager and Editor for MidiCommander
 # by Glenn Meader 2022
-# gmeader@gamil.com
+# gmeader@gmail.com
 
 # This program is an editing utility for use with MidiCommander.
 
@@ -296,7 +296,7 @@ def parseMidiMessage(msg):
         note = msg[1]
         note_name = noteName(note)
         velocity = msg[2]
-        cmd_title = 'NoteOn:' + str(note)+' '+note_name +' '+str(velocity) + ' CH:'+str(channel)
+        cmd_title = 'NoteOn:' + str(note)+' '+note_name +' '+str(velocity) + ' CH:'+str(channel+1)
         #print(' ',cmd_name, note, noteName, velocity,channel)
         return (cmd_title, cmd, note, velocity, channel)
 
@@ -304,7 +304,7 @@ def parseMidiMessage(msg):
         note = msg[1]
         velocity = msg[2]
         note_name = noteName(note)
-        cmd_title = 'NoteOff:' + str(note) + ' ' + note_name + ' ' + str(velocity)+ ' CH:'+str(channel)
+        cmd_title = 'NoteOff:' + str(note) + ' ' + note_name + ' ' + str(velocity)+ ' CH:'+str(channel+1)
         #print(' ',cmd_name, note, noteName, velocity,channel)
         return (cmd_title, cmd, note, velocity, channel)
 
@@ -312,34 +312,34 @@ def parseMidiMessage(msg):
         note = msg[1]
         velocity = msg[2]
         note_name = noteName(note)
-        cmd_title = 'Poly Aftertouch:' + str(note) + ' ' + note_name + ' ' + str(velocity)+ ' CH:'+str(channel)
+        cmd_title = 'Poly Aftertouch:' + str(note) + ' ' + note_name + ' ' + str(velocity)+ ' CH:'+str(channel+1)
         #print(' ',cmd_name, note, noteName,velocity,channel)
         return (cmd_title, cmd, note, velocity, channel)
 
     elif cmd == 176:  # B0h Control Change
         control_number = msg[1]
         value = msg[2]
-        cmd_title = 'CC' + str(control_number)+': '+ CC_names[control_number] + ': '+str(value)+ ' CH:'+str(channel)
+        cmd_title = 'CC' + str(control_number)+': '+ CC_names[control_number] + ': '+str(value)+ ' CH:'+str(channel+1)
         #print(' ',cmd_name, control_number, value,'CH',channel)
         return (cmd_title, cmd, control_number, value, channel)
 
     elif cmd == 192:  # C0h Program Change
         patch = msg[1] # only one databyte
-        cmd_title = 'ProgramChange:'+str(patch) + ' CH:'+str(channel)
+        cmd_title = 'ProgramChange:'+str(patch) + ' CH:'+str(channel+1)
         #print(' ',cmd_name, patch, 'CH',channel)
         return (cmd_title, cmd, patch, channel)
 
     elif cmd == 208:  # D0h Aftertouch - Channel Pressure
         velocity = msg[1] # only one databyte
-        cmd_title = 'Channel Pressure:' + str(velocity) + ' CH:'+str(channel)
+        cmd_title = 'Channel Pressure:' + str(velocity) + ' CH:'+str(channel+1)
         #print(' ',cmd_name, velocity, 'CH',channel)
         return (cmd_title, cmd, velocity, channel)
 
     elif cmd == 224:  # E0h PitchBend
         value = msg[2] * 256 + msg[1]
-        cmd_title = 'Pitchbend:'+str(value) + ' CH:'+str(channel)
+        cmd_title = 'Pitchbend:'+str(value) + ' CH:'+str(channel+1)
         #print(' ',cmd_name, value, 'CH',channel)
-        return (cmd_title, cmd, value, channel)
+        return (cmd_title, cmd,  msg[1], msg[2], channel)
 
     elif cmd == 255:  # FFh SYSEX
         cmd_title = 'SYSEX'
@@ -482,14 +482,13 @@ while True:
             selected_path = STARTING_PATH
 
         if len(selected_type) == 1 and selected_type[0] == 'file':
-            #user clicked on a filename
+            # user clicked on a filename
             if isFileSelected():
                 # if it is a MIDI file, not a SYSEX file, we can load its contents
                 if isMidiFileSelected():
                     # read and parse the file
                     listbox_data = parseMidiFile(selected_path)
-                    # display parsed messages in a listbox
-                    #print('LISTBOX_DATA:', listbox_data)
+                    # print('LISTBOX_DATA:', listbox_data)
                 else:
                     print('Cannot edit SYX files')
                     listbox_data = []
@@ -743,7 +742,9 @@ while True:
         # open file for write
         with open(selected_path, mode='wb') as file:
             # write all the MIDI commands
+            #print('SAVE:',listbox_data)
             for command in listbox_data:
+                #print (command)
                 title, cmd, data1, data2, channel = command
                 status_byte = cmd + (channel - 1)
                 if cmd in [192,208]: # only 2 bytes in the command
