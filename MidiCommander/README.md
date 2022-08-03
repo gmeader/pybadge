@@ -1,9 +1,9 @@
 # MidiCommander
-## A CircuitPython app for the Adafruit PyGamer with MIDI Featherwing
+## A CircuitPython Patch Librarian app for the Adafruit PyGamer with MIDI Featherwing
 
 ![Midicommander on PyGamer](MidiCommander3.jpg)
 
-MidiCommander enables a user to "play" syx and .mic files stored in "playlists" on an SDcard, out to MIDI devices connected by MIDI cable to the MIDI Featherwing MIDI Out DIN connector.
+MidiCommander is a MIDI "patch librarian" that enables a user to "play" .syx (SYSEX) and .mic files stored in "playlists" on an SDcard, out to MIDI devices connected by MIDI cable to the MIDI Featherwing MIDI Out DIN connector.
 It may be used to send MIDI data to several devices to configure a MIDI setup for each song during a gig.
 
 The file: code.py contains the CircuitPython that runs on the PyGamer.
