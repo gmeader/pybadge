@@ -6,6 +6,8 @@
 MidiCommander enables a user to "play" syx and .mic files stored in "playlists" on an SDcard, out to MIDI devices connected by MIDI cable to the MIDI Featherwing MIDI Out DIN connector.
 It may be used to send MIDI data to several devices to configure a MIDI setup for each song during a gig.
 
+The file: code.py contains the CircuitPython that runs on the PyGamer.
+
 Press the B button for Help
 
 More info is at http://chromakinetics.com/midicommander
