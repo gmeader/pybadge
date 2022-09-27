@@ -24,6 +24,7 @@
 import board
 import sdcardio
 import storage
+import gc
 import os
 import busio
 import time
@@ -34,10 +35,10 @@ import analogio # for joystick
 import keypad
 import displayio
 import terminalio
-from adafruit_display_text import label
+from adafruit_display_text import bitmap_label
 from adafruit_bitmap_font import bitmap_font
 
-version = '1.0'
+version = '1.1'
 print(os.uname().machine)
 print('version:',version)
 display = board.DISPLAY
@@ -155,6 +156,8 @@ def get_files(folderpath):
                 if file_extension == '.syx' or file_extension == '.mic':
                     # only collect files with .mixc o.syx extension
                     file_names.append((file_name,'f',file_extension)) # tag files with a 'f' and ext
+    del files
+    gc.collect()
     return file_names
 
 # Set initial values
@@ -189,14 +192,17 @@ def transmitFile (fileidx):
 
     print ("Reading: ", filepath)
     showTitleMessage('Transmitting...')
+    sent = 0
     with open (filepath, "rb") as fh:
-        midi_data = fh.read()
-
+        chunk = fh.read(1000)
+        while chunk:
+            written = uart.write(chunk)
+            sent += written
+            chunk = fh.read(1000)
+            
     #print(sysex)
-    written = uart.write(midi_data)
-    showTitleMessage('Sent: '+str(written)+' bytes')
-    print ("Bytes sent: ", written)
-
+    showTitleMessage('Sent: '+str(sent)+' bytes')
+    print ("Bytes sent: ", sent)
 
 def showTitleMessage(message):
     title.text = message
@@ -216,7 +222,7 @@ HELPCOLOUR = 0x00FFFF
 NUM_MENU_ROWS = 7
 rows = []
 # create array of Labels as rows on the screen (top row is Title)
-title  = label.Label(FONT, text=" "*20,color=BACKCOLOUR, background_color=TITLEBKGCOLOR ,scale=1)
+title  = bitmap_label.Label(FONT, text=" "*20,color=BACKCOLOUR, background_color=TITLEBKGCOLOR ,scale=1)
 title.x = 0
 title.y = 6
 menu_group.append(title)
@@ -229,12 +235,11 @@ def set_title(str):
     title.text = " "*pad_spaces + str + " "*pad_spaces
 
 for f in range(NUM_MENU_ROWS):
-    namelab = label.Label(FONT, text=" "*10, color=TEXTCOLOUR, scale=1)
+    namelab = bitmap_label.Label(FONT, text=" "*10, color=TEXTCOLOUR, scale=1)
     namelab.x = 2
     namelab.y = 25+f*(TEXTHEIGHT+5)
     rows.append(namelab)
     menu_group.append(namelab)
-
 
 def showMenu():
     global help
@@ -261,7 +266,7 @@ def showMenu():
             start_item = selected_name_id - 3
             # scroll the list of menu items so that the selected on is in the center row
 
-        # display all rows of the menu
+    # display all rows of the menu
     for r in range(NUM_MENU_ROWS):
         item_index = r + start_item
         if item_index < NUM_ITEMS:
@@ -321,7 +326,6 @@ def changeFolderPath(dir_id):
             return
     changeDir(folder_path)
 
-
 def changeDir(folderpath):
     global file_names, NUM_ITEMS, current_dirname, selected_name_id, selected_menu_row
     if folderpath == root_folder:
@@ -333,6 +337,7 @@ def changeDir(folderpath):
     selected_name_id = 0
     selected_menu_row = 0
     updateMenuDisplay()
+    gc.collect()
 
 def itemDown ():
     # next item in list of menu items
@@ -377,7 +382,14 @@ def sendFile ():
     if file_names[selected_name_id][1] != 'f':
         changeFolderPath(selected_name_id)
         return
+    gc.collect()
+    #start_mem = gc.mem_free()
+    #print( "Before transmitFile Available memory: {} bytes".format(start_mem) )    
     transmitFile(selected_name_id)
+    gc.collect()
+    #end_mem = gc.mem_free()
+    #print( "After transmitFile Available memory: {} bytes".format(end_mem) )
+    #print( "transmitFile used {} bytes".format(start_mem - end_mem) )
 
 updateMenuDisplay()
 
