@@ -12,12 +12,6 @@ The file: code.py contains the CircuitPython that runs on the PyGamer. Some libr
 - adafruit_bitmap_font
 - adafruit_bus_device
 
-There is a bug where memory is not being properly released after a file is sent. midicommander.py is a test version that includes garbage collection and prints out memory usage info.
-
-The file memoryusage.py is for testing that memory is released after a file is sent. You put any files you want to test in the mrkhamer folder on the SDcard.
-
-
-
 ### Using MIDI Commander
 Press the B button for Help
 
